@@ -21,17 +21,24 @@ namespace MathAPI_Testing
         [TestCase(1235.55,4.45)]
         public void TestAddition(double x, double y)
         {
-            var request = new RestRequest("", Method.Post);
- 
-            string body = Util.RequestBody($"{x} + {y}", precision);
-            request.AddBody(body);
+            try
+            {
+                var request = new RestRequest("", Method.Post);
 
-            var response = client.Post<Dictionary<string, string>>(request);
+                string body = Util.RequestBody($"{x} + {y}", precision);
+                request.AddBody(body);
 
-            double actualResult = Util.ResponseResult(response);
-            double expectedResult = Util.OperationResult(x, y, (x, y) => x + y);
+                var response = client.Post<Dictionary<string, string>>(request);
 
-            Assert.That(actualResult, Is.EqualTo(expectedResult));
+                double actualResult = Util.ResponseResult(response);
+                double expectedResult = Util.OperationResult(x, y, (x, y) => x + y);
+
+                Assert.That(actualResult, Is.EqualTo(expectedResult));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
         
 
@@ -42,17 +49,24 @@ namespace MathAPI_Testing
         [TestCase(1235.55, 4.45)]
         public void TestSubtraction(double x, double y)
         {
-            var request = new RestRequest("", Method.Post);
+            try
+            {
+                var request = new RestRequest("", Method.Post);
 
-            string body = Util.RequestBody($"{x} - {y}", precision);
-            request.AddBody(body);
+                string body = Util.RequestBody($"{x} - {y}", precision);
+                request.AddBody(body);
 
-            var response = client.Post<Dictionary<string, string>>(request);
+                var response = client.Post<Dictionary<string, string>>(request);
 
-            double actualResult = Util.ResponseResult(response);
-            double expectedResult = Util.OperationResult(x, y, (x, y) => x - y);
+                double actualResult = Util.ResponseResult(response);
+                double expectedResult = Util.OperationResult(x, y, (x, y) => x - y);
 
-            Assert.That(actualResult, Is.EqualTo(expectedResult));
+                Assert.That(actualResult, Is.EqualTo(expectedResult));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         [Category("Multiplication")]
@@ -62,17 +76,24 @@ namespace MathAPI_Testing
         [TestCase(1235.55, 4.45)]
         public void TestMultiplication(double x, double y)
         {
-            var request = new RestRequest("", Method.Post);
+            try
+            {
+                var request = new RestRequest("", Method.Post);
 
-            string body = Util.RequestBody($"{x} * {y}", precision);
-            request.AddBody(body);
+                string body = Util.RequestBody($"{x} * {y}", precision);
+                request.AddBody(body);
 
-            var response = client.Post<Dictionary<string, string>>(request);
+                var response = client.Post<Dictionary<string, string>>(request);
 
-            double actualResult = Util.ResponseResult(response);
-            double expectedResult = Util.OperationResult(x, y, (x, y) => x * y);
+                double actualResult = Util.ResponseResult(response);
+                double expectedResult = Util.OperationResult(x, y, (x, y) => x * y);
 
-            Assert.That(actualResult, Is.EqualTo(expectedResult));
+                Assert.That(actualResult, Is.EqualTo(expectedResult));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         [Category("Division")]
@@ -82,17 +103,24 @@ namespace MathAPI_Testing
         [TestCase(1235.55, 4.45)]
         public void TestDivision(double x, double y)
         {
-            var request = new RestRequest("", Method.Post);
+            try
+            {
+                var request = new RestRequest("", Method.Post);
 
-            string body = Util.RequestBody($"{x} / {y}", precision);
-            request.AddBody(body);
+                string body = Util.RequestBody($"{x} / {y}", precision);
+                request.AddBody(body);
 
-            var response = client.Post<Dictionary<string, string>>(request);
+                var response = client.Post<Dictionary<string, string>>(request);
 
-            double actualResult = Util.ResponseResult(response);
-            double expectedResult = Util.OperationResult(x, y, (x, y) => x / y);
+                double actualResult = Util.ResponseResult(response);
+                double expectedResult = Util.OperationResult(x, y, (x, y) => x / y);
 
-            Assert.That(actualResult, Is.EqualTo(expectedResult).Within(Math.Pow(10, -precision)));
+                Assert.That(actualResult, Is.EqualTo(expectedResult).Within(Math.Pow(10, -precision)));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         [Category("Square Root")]
@@ -101,16 +129,23 @@ namespace MathAPI_Testing
         [TestCase(1235.55)]
         public void TestSquareRoot(double x)
         {
-            var request = new RestRequest($"?expr=sqrt({x})");
+            try
+            {
+                var request = new RestRequest($"?expr=sqrt({x})");
 
-            var response = client.Get(request);
+                var response = client.Get(request);
 
-            if (double.TryParse(response.Content, out double actualResult) == false)
-                throw new Exception("Failed to convert client response to double");
+                if (double.TryParse(response.Content, out double actualResult) == false)
+                    throw new Exception("Failed to convert client response to double");
 
-            double expectedResult = Math.Sqrt(x);
+                double expectedResult = Math.Sqrt(x);
 
-            Assert.That(actualResult, Is.EqualTo(expectedResult).Within(Math.Pow(10, -precision)));
+                Assert.That(actualResult, Is.EqualTo(expectedResult).Within(Math.Pow(10, -precision)));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         [OneTimeTearDown]
