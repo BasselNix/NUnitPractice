@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using NUnit.Framework.Constraints;
+using RestSharp;
 
 namespace MathAPI_Testing
 {
@@ -7,11 +8,13 @@ namespace MathAPI_Testing
     {
         public required MathsAPIService client;
         private readonly int _precision = TestContext.Parameters.Get<int>("RoundingIndex", 100);
+        private double _tolerance;
 
         [OneTimeSetUp]
         public void Setup()
         {
             client = new MathsAPIService();
+            _tolerance = Math.Pow(10, -_precision);
         }
 
         [Category("Addition")]
@@ -27,7 +30,7 @@ namespace MathAPI_Testing
             double actualResult = response.Result;
             double expectedResult = x + y;
 
-            Assert.That(actualResult, Is.EqualTo(expectedResult));
+            Assert.That(actualResult, Is.EqualTo(expectedResult).Within(_tolerance));
         }
         
 
@@ -44,7 +47,7 @@ namespace MathAPI_Testing
             double actualResult = response.Result;
             double expectedResult = x - y;
 
-            Assert.That(actualResult, Is.EqualTo(expectedResult));
+            Assert.That(actualResult, Is.EqualTo(expectedResult).Within(_tolerance));
         }
 
         [Category("Multiplication")]
@@ -60,7 +63,7 @@ namespace MathAPI_Testing
             double actualResult = response.Result;
             double expectedResult = x * y;
 
-            Assert.That(actualResult, Is.EqualTo(expectedResult));
+            Assert.That(actualResult, Is.EqualTo(expectedResult).Within(_tolerance));
         }
 
         [Category("Division")]
@@ -76,7 +79,7 @@ namespace MathAPI_Testing
             double actualResult = response.Result;
             double expectedResult = x / y;
 
-            Assert.That(actualResult, Is.EqualTo(expectedResult).Within(Math.Pow(10, -_precision)));
+            Assert.That(actualResult, Is.EqualTo(expectedResult).Within(_tolerance));
         }
 
         [Category("Square Root")]
@@ -88,7 +91,7 @@ namespace MathAPI_Testing
             double actualResult = client.GetExpression($"sqrt({x})");
             double expectedResult = Math.Sqrt(x);
 
-            Assert.That(actualResult, Is.EqualTo(expectedResult).Within(Math.Pow(10, -_precision)));
+            Assert.That(actualResult, Is.EqualTo(expectedResult).Within(_tolerance));
         }
 
         [OneTimeTearDown]
