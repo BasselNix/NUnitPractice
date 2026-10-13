@@ -13,6 +13,9 @@ namespace MathAPI_Testing
         [OneTimeSetUp]
         public void Setup()
         {
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+
             client = new MathsAPIService();
             _tolerance = Math.Pow(10, -_precision);
         }

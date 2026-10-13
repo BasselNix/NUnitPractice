@@ -1,9 +1,10 @@
 ﻿using MathAPI_Testing.Models;
 using RestSharp;
+using System.Globalization;
 
 namespace MathAPI_Testing
 {
-    public class MathsAPIService
+    public class MathsAPIService : IDisposable
     {
         public RestClient _client;
 
@@ -16,7 +17,7 @@ namespace MathAPI_Testing
         public MathResponse? PostExpression(string expression, int precision)
         {
             var request = new RestRequest("", Method.Post);
-            request.AddJsonBody(new MathRequest { Expr = expression, Precision = precision });
+            request.AddJsonBody(new { Expr = expression, Precision = precision });
 
             return _client.Post<MathResponse>(request);
         }
@@ -24,14 +25,18 @@ namespace MathAPI_Testing
         public double GetExpression(string expression)
         {
             var request = new RestRequest($"?expr={Uri.EscapeDataString(expression)}");
-            double.TryParse(_client.Get(request).Content, out double result);
+            
+            if (double.TryParse(_client.Get(request).Content, NumberStyles.Any, CultureInfo.InvariantCulture, out double result))
+                return result;
 
-            return result;
+            throw new Exception("GET request returned response that could not be parsed to double");
         }
 
         public void Dispose()
         {
             _client?.Dispose();
+
+            GC.SuppressFinalize(this);
         }
     }
 }
