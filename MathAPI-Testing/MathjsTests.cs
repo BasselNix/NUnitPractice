@@ -1,5 +1,5 @@
-﻿using NUnit.Framework.Constraints;
-using RestSharp;
+﻿using System.Globalization;
+using NUnit.Framework;
 
 namespace MathAPI_Testing
 {
@@ -18,13 +18,28 @@ namespace MathAPI_Testing
         }
 
         [Category("Addition")]
-        [TestCase(2, 3)]
-        [TestCase(-137, 7)]
-        [TestCase(0,-12)]
-        [TestCase(1235.55,4.45)]
-        public void TestAddition(double x, double y)
+        // Positive + Positive
+        [TestCase("2", "3")]
+        // Positive + Negative
+        [TestCase("137", "-7")]
+        // Negative + Positive
+        [TestCase("-137", "7")]
+        // Negative + Negative
+        [TestCase("-15.5", "-4.5")]
+        // Zero boundaries
+        [TestCase("0", "-12")]
+        [TestCase("0", "0")]
+        // Decimals
+        [TestCase("1235.55", "4.45")]
+        // Scientific notation
+        [TestCase("1e3", "2.5e2")]
+        [TestCase("-1e3", "5e-1")]
+        public void TestAddition(string xStr, string yStr)
         {
-            var response = client.PostExpression($"{x} + {y}", _precision);
+            double x = double.Parse(xStr, CultureInfo.InvariantCulture);
+            double y = double.Parse(yStr, CultureInfo.InvariantCulture);
+
+            var response = client.PostExpression($"{xStr} + {yStr}", _precision);
             Assert.That(response, Is.Not.Null);
 
             double actualResult = response.Result;
@@ -32,16 +47,30 @@ namespace MathAPI_Testing
 
             Assert.That(actualResult, Is.EqualTo(expectedResult).Within(_tolerance));
         }
-        
 
         [Category("Subtraction")]
-        [TestCase(2, 3)]
-        [TestCase(-137, 7)]
-        [TestCase(0, -12)]
-        [TestCase(1235.55, 4.45)]
-        public void TestSubtraction(double x, double y)
+        // Positive - Positive
+        [TestCase("2", "3")]
+        // Positive - Negative
+        [TestCase("137", "-7")]
+        // Negative - Positive
+        [TestCase("-137", "7")]
+        // Negative - Negative
+        [TestCase("-15.5", "-4.5")]
+        // Zero boundaries
+        [TestCase("0", "-12")]
+        [TestCase("12", "0")]
+        // Decimals
+        [TestCase("1235.55", "4.45")]
+        // Scientific notation
+        [TestCase("1e3", "2.5e2")]
+        [TestCase("5e2", "-1e2")]
+        public void TestSubtraction(string xStr, string yStr)
         {
-            var response = client.PostExpression($"{x} - {y}", _precision);
+            double x = double.Parse(xStr, CultureInfo.InvariantCulture);
+            double y = double.Parse(yStr, CultureInfo.InvariantCulture);
+
+            var response = client.PostExpression($"{xStr} - {yStr}", _precision);
             Assert.That(response, Is.Not.Null);
 
             double actualResult = response.Result;
@@ -51,13 +80,28 @@ namespace MathAPI_Testing
         }
 
         [Category("Multiplication")]
-        [TestCase(2, 3)]
-        [TestCase(-137, 7)]
-        [TestCase(0, -12)]
-        [TestCase(1235.55, 4.45)]
-        public void TestMultiplication(double x, double y)
+        // Positive * Positive
+        [TestCase("2", "3")]
+        // Positive * Negative
+        [TestCase("137", "-7")]
+        // Negative * Positive
+        [TestCase("-137", "7")]
+        // Negative * Negative
+        [TestCase("-12.5", "-4")]
+        // Zero boundary
+        [TestCase("0", "-12")]
+        [TestCase("0", "0")]
+        // Decimals
+        [TestCase("1235.55", "4.45")]
+        // Scientific notation
+        [TestCase("1e3", "2e-2")]
+        [TestCase("-2e2", "3e3")]
+        public void TestMultiplication(string xStr, string yStr)
         {
-            var response = client.PostExpression($"{x} * {y}", _precision);
+            double x = double.Parse(xStr, CultureInfo.InvariantCulture);
+            double y = double.Parse(yStr, CultureInfo.InvariantCulture);
+
+            var response = client.PostExpression($"{xStr} * {yStr}", _precision);
             Assert.That(response, Is.Not.Null);
 
             double actualResult = response.Result;
@@ -67,13 +111,27 @@ namespace MathAPI_Testing
         }
 
         [Category("Division")]
-        [TestCase(2, 3)]
-        [TestCase(-137, 7)]
-        [TestCase(0, -12)]
-        [TestCase(1235.55, 4.45)]
-        public void TestDivision(double x, double y)
+        // Positive / Positive
+        [TestCase("2", "3")]
+        // Positive / Negative
+        [TestCase("137", "-7")]
+        // Negative / Positive
+        [TestCase("-137", "7")]
+        // Negative / Negative
+        [TestCase("-100", "-4")]
+        // Zero numerator
+        [TestCase("0", "-12")]
+        // Decimals
+        [TestCase("1235.55", "4.45")]
+        // Scientific notation
+        [TestCase("1e4", "2e2")]
+        [TestCase("5e-1", "2e-2")]
+        public void TestDivision(string xStr, string yStr)
         {
-            var response = client.PostExpression($"{x} / {y}", _precision);
+            double x = double.Parse(xStr, CultureInfo.InvariantCulture);
+            double y = double.Parse(yStr, CultureInfo.InvariantCulture);
+
+            var response = client.PostExpression($"{xStr} / {yStr}", _precision);
             Assert.That(response, Is.Not.Null);
 
             double actualResult = response.Result;
@@ -83,12 +141,21 @@ namespace MathAPI_Testing
         }
 
         [Category("Square Root")]
-        [TestCase(16)]
-        [TestCase(32)]
-        [TestCase(1235.55)]
-        public void TestSquareRoot(double x)
+        // Perfect square
+        [TestCase("16")]
+        // Non-perfect square / Decimal
+        [TestCase("32")]
+        [TestCase("1235.55")]
+        // Zero boundary
+        [TestCase("0")]
+        // Scientific notation
+        [TestCase("1e4")]
+        [TestCase("2.25e2")]
+        public void TestSquareRoot(string xStr)
         {
-            double actualResult = client.GetExpression($"sqrt({x})");
+            double x = double.Parse(xStr, CultureInfo.InvariantCulture);
+
+            double actualResult = client.GetExpression($"sqrt({xStr})");
             double expectedResult = Math.Sqrt(x);
 
             Assert.That(actualResult, Is.EqualTo(expectedResult).Within(_tolerance));
